@@ -15,8 +15,8 @@ contract WavePortal {
     }
     Wave[] waves;
 
-    constructor() {
-        console.log('Smart contract second iteration.');
+    constructor() payable {
+        console.log('Smart contract third iteration.');
     }
 
     function wave(string memory _message) public {
@@ -30,7 +30,7 @@ contract WavePortal {
             prizeAmount <= address(this).balance,
             'Unfortunately, we are out of funds! :('
         );
-        (bool success,) = (msg.sender).call{value: prizeAmount}('');
+        (bool success,) = (msg.sender).call{value: prizeAmount}("");
         require(success, 'Unexpected failure. Cannot withdraw money from the contract.');
     }
 
