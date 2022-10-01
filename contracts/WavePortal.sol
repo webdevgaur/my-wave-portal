@@ -7,6 +7,8 @@ import 'hardhat/console.sol';
 contract WavePortal {
     
     uint256 totalWaves = 0;
+    uint256 private seed;
+
     event NewWave(address indexed from, uint256 timestamp, string message);
     struct Wave {
         address waver;
@@ -17,13 +19,15 @@ contract WavePortal {
 
     constructor() payable {
         console.log('Smart contract third iteration.');
+        seed = (block.timestamp + block.difficulty)%100;
+        console.log('Random seed at genesis is:', seed);
     }
+
 
     function wave(string memory _message) public {
         totalWaves += 1;
         console.log('Wave recieved from %s with message %s', msg.sender, _message);
         waves.push(Wave(msg.sender, block.timestamp, _message));
-        emit NewWave(msg.sender, block.timestamp, _message);
 
         uint256 prizeAmount = 0.001 ether;
         require(
@@ -32,6 +36,10 @@ contract WavePortal {
         );
         (bool success,) = (msg.sender).call{value: prizeAmount}("");
         require(success, 'Unexpected failure. Cannot withdraw money from the contract.');
+
+        emit NewWave(msg.sender, block.timestamp, _message);
+
+        
     }
 
     function getAllWaves() public view returns(Wave[] memory) {
